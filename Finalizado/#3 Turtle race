@@ -1,0 +1,45 @@
+import turtle
+import random
+
+	#Screen modification
+is_race_on = False
+screen = turtle.Screen()
+screen.setup(width=1000, height=800)
+guess = screen.textinput(title="Make your choice!",prompt="Which turtle will win the race? Enter a color: ")
+print("Good luck!")
+	#Turtle colors
+colors = ["red","orange","yellow","green","blue"]
+
+	#Turtle position (y)
+y_positions = [320,160,0,-160,-320]
+
+	#All turtles list
+all_turtles = []
+
+	#Loop to create turtles
+for turtle_numbers in range(0,5):
+    new_turtle = turtle.Turtle(shape="turtle")
+    new_turtle.penup()
+    new_turtle.color(colors[turtle_numbers])
+    new_turtle.goto(x=-400, y=y_positions[turtle_numbers])
+    all_turtles.append(new_turtle)
+
+	#Turtle movement
+if guess:
+    is_race_on = True
+
+while is_race_on:
+    for turtle in all_turtles:
+        if turtle.xcor() > 480:
+            is_race_on = False
+            winning_color = turtle.pencolor()
+            if winning_color == guess:
+                print(f"You've won! The {winning_color} is the winner!")
+            else:
+                print(f"Sorry! The winner color was {winning_color}")
+
+        random_step = random.randint(0,10)
+        turtle.forward(random_step)
+
+
+screen.exitonclick()
