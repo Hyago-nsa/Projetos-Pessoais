@@ -1,0 +1,61 @@
+def machine():
+
+    def yes_no():
+        answer = input("Do you want another coffe?").lower()
+        if answer == "yes":
+            coffe()
+        elif answer == "no":
+            print("Good bye!")
+            return
+        else:
+            print("You should use 'yes' or 'no'.\n")
+            yes_no()
+
+    def payment():
+        quarters = int(input("How many quarters?"))
+        dimes = int(input("How many dimes?"))
+        nickles = int(input("How many nickles?"))
+        pennies = int(input("How many pennies"))
+
+        total_payment = (quarters * 0.25) + (dimes * 0.10) + (nickles * 0.05) + (pennies * 0.01)
+
+        if total_payment >= coffe_price:
+            change = total_payment - coffe_price
+            print(f"Here's your change {round(change,2)}")
+        else:
+            print("You don't have enough money for this coffe.\n")
+
+    def quantity(water,milk,coffe):
+        total_water = 300
+        total_milk = 200
+        total_coffe = 100
+
+        total_water -= water
+        total_milk -= - milk
+        total_coffe -= coffe
+
+        if total_water < 0 or total_milk < 0 or total_coffe < 0:
+            print("We're out of ingredients")
+            return False
+        else:
+            return True
+
+    def coffe():
+        coffe_price = input("What would you like? (Espresso/Latte/Cappuccino): ").lower()
+        if coffe_price == "espresso":
+            coffe_price = 1.5
+            if quantity(50,0,18):
+                payment()
+        elif coffe_price == "latte":
+            coffe_price = 2.5
+            if quantity(200,150,24):
+                payment()
+        elif coffe_price == "cappuccino":
+            coffe_price = 3.0
+            if quantity(250,100,24):
+                payment()
+        else:
+            print("a")
+
+    yes_no()
+machine()
