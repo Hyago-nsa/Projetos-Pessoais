@@ -1,0 +1,157 @@
+import turtle
+import random
+import time
+
+ # Creating Snake class
+class Snake():
+
+    def __init__(self):
+        self.snake_body_segments = []
+        self.create_snake_body()
+        self.snake_head = self.snake_body_segments[0]
+
+    def create_snake_body(self):
+        # Creating the snake main body that has 3 squares
+        for position in MAIN_SNAKE_POSITION:
+            self.add_segment_body(position)
+
+    def add_segment_body(self, position):
+        # Add segments to the snake
+        snake_body = turtle.Turtle(shape="square")
+        snake_body.color("White")
+        snake_body.penup()
+        snake_body.goto(position)
+        self.snake_body_segments.append(snake_body)
+
+    def extend_snake_body(self):
+        # Extend the snake main body when it reachers a food
+        self.add_segment_body(self.snake_body_segments[-1].position())
+
+
+    def move_snake(self):
+        # The segment [-1] follows the next segment until reaches segment[0]
+        for segment_number in range(len(self.snake_body_segments) - 1, 0, -1):
+            x_location = self.snake_body_segments[segment_number - 1].xcor()
+            y_location = self.snake_body_segments[segment_number - 1].ycor()
+            self.snake_body_segments[segment_number].goto(x_location, y_location)
+        self.snake_head.forward(SNAKE_MOVEMENT_DISTANCE)
+
+    # Snake movement (UP/DOWN/LEFT/RIGHT)
+    def up(self):
+        if self.snake_head.heading() != DOWN:
+            self.snake_head.setheading(UP)
+
+    def down(self):
+        if self.snake_head.heading() != UP:
+            self.snake_head.setheading(DOWN)
+
+    def left(self):
+        if self.snake_head.heading() != RIGHT:
+            self.snake_head.setheading(LEFT)
+
+    def right(self):
+        if self.snake_head.heading() != LEFT:
+            self.snake_head.setheading(RIGHT)
+
+ # Creating Food Class
+class Food(turtle.Turtle):
+
+    def __init__(self):
+        super().__init__()
+
+        self.shape("circle")
+        self.penup()
+        self.shapesize(stretch_len=0.5, stretch_wid=0.5)
+        self.color("white")
+        self.speed("fastest")
+        self.new_food_position()
+
+    def new_food_position(self):
+        x_position = random.randint(-380, +380)
+        y_position = random.randint(-380, +380)
+        self.goto(x_position,y_position)
+
+ # Creating Scoreboard Class
+class Scoreboard(turtle.Turtle):
+
+    def __init__(self):
+        super().__init__()
+
+        self.goto(0, 360)
+        self.score = 0
+        self.color("white")
+        self.write(f"Score: {self.score}", False, align="center", font=("Courier", 20, "normal"))
+        self.hideturtle()
+
+    def increase_score(self):
+
+        self.score += 1
+        self.clear()
+        self.write(f"Score: {self.score}", False, align="center", font=("Courier", 20, "normal"))
+
+    def game_over(self):
+        self.goto(0, 0)
+        self.write(f"Game Over!", False, align="center", font=("Courier", 30, "normal"))
+
+#Default values:
+MAIN_SNAKE_POSITION = [(0, 0), (-20, 0), (-40, 0)]
+SNAKE_MOVEMENT_DISTANCE = 20
+UP = 90
+DOWN = 270
+LEFT = 180
+RIGHT = 0
+
+#Screen settings :
+screen = turtle.Screen()
+screen.setup(width=800,height=800)
+screen.bgcolor("black")
+screen.title("Snake Game")
+screen.tracer(0)
+
+#Scoreboard settings:
+scoreboard = Scoreboard()
+
+#Food settings:
+food = Food()
+
+#Snake settings:
+snake = Snake()
+
+screen.listen()
+screen.onkey(snake.up, "Up")
+screen.onkey(snake.down, "Down")
+screen.onkey(snake.left, "Left")
+screen.onkey(snake.right, "Right")
+
+
+game_is_on = True
+
+while game_is_on:
+    screen.update()
+    time.sleep(0.08)
+    snake.move_snake()
+
+    #Detect collision with food:
+    if snake.snake_head.distance(food) < 15:
+        food.new_food_position()
+        snake.extend_snake_body()
+        scoreboard.increase_score()
+
+    #Detect collision with wall:
+    wall_x_limit = snake.snake_head.xcor() > 380 or snake.snake_head.xcor() < -380
+    wall_y_limit = snake.snake_head.ycor() > 380 or snake.snake_head.ycor() < -380
+
+    if wall_x_limit or wall_y_limit:
+        scoreboard.game_over()
+        game_is_on = False
+
+    #Detect collision with tail:
+    for segment in snake.snake_body_segments[1:]:
+        if snake.snake_head.distance(segment) < 10:
+            scoreboard.game_over()
+            game_is_on = False
+
+
+
+screen.exitonclick()
+
