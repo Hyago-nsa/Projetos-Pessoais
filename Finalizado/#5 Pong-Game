@@ -1,0 +1,142 @@
+import turtle
+import time
+
+# Paddle Class
+class Paddle(turtle.Turtle):
+
+    def __init__(self, position):
+        super().__init__()
+
+        self.shape("square")
+        self.penup()
+        self.color("white")
+        self.shapesize(8,1)
+        self.goto(position)
+
+    # Paddle loop movement:
+    def up(self):
+        new_y = self.ycor() + 20
+        self.goto(self.xcor(), new_y)
+
+    def down(self):
+        new_y = self.ycor() - 20
+        self.goto(self.xcor(), new_y)
+
+# Ball Class
+class Ball(turtle.Turtle):
+
+    def __init__(self):
+        super().__init__()
+
+        self.color("white")
+        self.penup()
+        self.shape("circle")
+        self.x_move = 5
+        self.y_move = 5
+
+    def move(self):
+        new_x = self.xcor() + self.x_move
+        new_y = self.ycor() + self.y_move
+        self.goto(new_x, new_y)
+
+    def bounce_y(self):
+        self.y_move *= -1
+
+    def bounce_x(self):
+        self.x_move *= -1
+
+    def ball_reset(self):
+        self.goto(0, 0)
+        self.bounce_x()
+
+# Scoreboard Class
+class Scoreboard(turtle.Turtle):
+
+    def __init__(self):
+        super().__init__()
+
+        self.color("white")
+        self.penup()
+        self.hideturtle()
+
+        self.right_score = 0
+        self.left_score = 0
+        self.scoreboard_update()
+
+    def scoreboard_update(self):
+        # Right side
+        self.goto(206, 260)
+        self.write(self.right_score, align="center", font=("Arial", 70, "bold"))
+
+        # Left side
+        self.goto(-206, 260)
+        self.write(self.left_score, align="center", font=("Arial", 70, "bold"))
+
+    def right_score_increment(self):
+        self.right_score += 1
+        self.clear()
+        self.scoreboard_update()
+
+    def left_score_increment(self):
+        self.left_score += 1
+        self.clear()
+        self.scoreboard_update()
+
+# MAIN #        
+
+# Screen default settings
+screen = turtle.Screen()
+screen.setup(width=1064,height=768)
+screen.bgcolor("black")
+screen.title("Pong Game")
+screen.tracer(0)
+screen.listen()
+bonus_speed = 0.2
+
+# Creating scoreboard
+scoreboard = Scoreboard()
+
+# Creating ball
+ball = Ball()
+
+# Creating Paddles
+paddle_left = Paddle((-500, 0))
+paddle_right = Paddle((500, 0))
+
+# Paddles movement
+screen.onkeypress(paddle_left.up, "w")
+screen.onkeypress(paddle_left.down, "s")
+
+screen.onkey(paddle_right.up, "Up")
+screen.onkey(paddle_right.down, "Down")
+
+# Game update screen
+game_is_on = True
+
+while game_is_on:
+    time.sleep(0.10 * bonus_speed)
+    screen.update()
+    ball.move()
+
+    # Detecting collision with wall (y)
+    if ball.ycor() > 364 or ball.ycor() < -364:
+        ball.bounce_y()
+
+    # Detecting collision with paddle
+    if ball.distance(paddle_right) < 100 and ball.xcor() > 470 or ball.distance(paddle_left) < 100 and ball.xcor() < -470:
+        ball.bounce_x()
+        bonus_speed *= 0.96
+        print(0.10 * bonus_speed)
+
+    # Detecting if ball was not catch by RIGHT paddle
+    if ball.xcor() > 512:
+        ball.ball_reset()
+        scoreboard.left_score_increment()
+
+    # Detecting if ball was not catch by LEFT paddle
+    if ball.xcor() < -512:
+        ball.ball_reset()
+        scoreboard.right_score_increment()
+
+
+screen.exitonclick()
