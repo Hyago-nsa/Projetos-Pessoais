@@ -1,0 +1,58 @@
+import turtle
+import pandas
+
+# Screen Settings
+screen = turtle.Screen()
+screen.title("U.S States Game")
+image = "blank_states_img.gif"
+screen.addshape(image)
+
+# Turtle Settings
+turtle.shape(image)
+state_position = turtle.Turtle()
+state_position.hideturtle()
+state_position.penup()
+
+# Data settings
+data = pandas.read_csv("50_states.csv")
+data_state_list = data["state"].to_list()
+correct_guessed_states = []
+
+# Input settings
+
+while len(data_state_list) != 0:
+    answer_state = screen.textinput(title=f"Correct states:  [{len(correct_guessed_states)}/50]",
+                                    prompt="Guess a U.S State name !").title()
+
+    if answer_state in data_state_list:
+        print(f"You're correct! The state {answer_state} is one of 50 U.S States.")
+        correct_guessed_states.append(answer_state)
+        data_state_list.remove(answer_state)
+
+        # State data from answer_state typed by user
+        state_data = data[data["state"] == answer_state]
+        x = int(state_data["x"])
+        y = int(state_data["y"])
+        state = state_data["state"].item()
+
+        # Creating a state in position (x,y)
+        state_position.goto(x, y)
+        state_position.write(state)
+
+    elif answer_state in correct_guessed_states:
+        print(f"You already typed {answer_state}, and it was right!")
+
+    elif answer_state == "Exit":
+        print(f"Your score was [{correct_states}/50]")
+        print("A CSV was created with all missing states.")
+        df = pandas.DataFrame(data_state_list)
+        df.to_csv("Missing states")
+        break
+
+    else:
+        print(f"The state {answer_state} isn't one of 50 U.S States.")
+
+if correct_states >= 50:
+    print("YOU WIN ! Congratulations.")
+
+print("\nGood bye!")
