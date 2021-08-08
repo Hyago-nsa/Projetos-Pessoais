@@ -42,7 +42,7 @@ if price_as_float >= BUY_PRICE:
 
     with smtplib.SMTP("smtp.gmail.com", 587) as connection:
         connection.starttls()
-        connection.login("hyago.nsa.bot@gmail.com", "")
+        connection.login("hyago.nsa.bot@gmail.com", "########")
         connection.sendmail(
             from_addr=mail_from,
             to_addrs=mail_to,
