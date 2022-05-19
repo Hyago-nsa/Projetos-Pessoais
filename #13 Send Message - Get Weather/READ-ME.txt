@@ -1,0 +1,5 @@
+O código está hospedado em https://www.pythonanywhere.com/ para deixar o código agendado para rodar
+Você usou o Twillio para mandar as mensagems
+
+O codigo é executado no pythonanywhere -> Recebe as informações (API) relacionadas ao clima em openweathermap ->
+Checa se vai chover ou não na localização -> Manda a mensagem
